@@ -52,6 +52,12 @@ if __name__ == "__main__":
 
     print("\n--- SESIÓN COMPLETADA: Tu cerebro está en estado Alpha ---")
     
+    # 1. Detenemos la música Inmediatamente
+    pygame.mixer.music.stop()
+    pygame.mixer.quit() # Cerramos el sistema de audio para liberar memoria
+    print("Silencio Activado. así es tu estado Alpha... Sergio")
+    
+    # 2. Ahora en silencio, hacemos la pregunta para el log
     try:
         # Aquí es donde llamamos a la función que antes fallaba
         puntaje = input("¿Nivel de claridad mental (1-10)?: ")
@@ -61,5 +67,4 @@ if __name__ == "__main__":
         # Si algo falla, intentamos guardar N/A
         print(f"Error al guardar: {e}")
     
-    pygame.mixer.music.stop()
-    print("Audio detenido. ¡Que tengas un excelente día, Sergio!")
+    
