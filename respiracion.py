@@ -1,50 +1,65 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Tue Dec 23 12:55:18 2025
-
-@author: sergio
-"""
-
 import time
 import os
 import pygame
+import csv
+from datetime import datetime
+
+# --- 1. DEFINICIÓN DE FUNCIONES (El banco de herramientas) ---
 
 def iniciar_ondas_alfa():
-    """Inicializa y reproduce la música de fondo una sola vez"""
     pygame.mixer.init()
     ruta_archivo = "Ondas_Alfa_10Hz_8min.mp3" 
-    
     if os.path.exists(ruta_archivo):
         try:
             pygame.mixer.music.load(ruta_archivo)
-            pygame.mixer.music.play(-1)  # El -1 hace que se repita en bucle
-            print(f"--- 🎵 Ondas Alfa Activas: {ruta_archivo} ---")
+            pygame.mixer.music.set_volume(0.5) 
+            pygame.mixer.music.play(-1)
+            print(f"--- 🎵 Ondas Alfa Activas ---")
         except Exception as e:
-            print(f"Error al cargar el audio: {e}")
-    else:
-        print(f"⚠️ Archivo {ruta_archivo} no encontrado en la carpeta.")
+            print(f"Error al cargar audio: {e}")
+
+def registrar_sesion(calificacion, duracion_min=8):
+    """Guarda los datos en log_rendimiento.csv"""
+    archivo_log = "log_rendimiento.csv"
+    fecha_hora = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    
+    # Verificamos si existe para poner o no los encabezados
+    file_exists = os.path.isfile(archivo_log)
+    
+    with open(archivo_log, mode='a', newline='') as file:
+        writer = csv.writer(file)
+        if not file_exists:
+            writer.writerow(["Fecha", "Duracion_Min", "Sentimiento_1_10", "Estado"])
+        writer.writerow([fecha_hora, duracion_min, calificacion, "Alpha"])
 
 def guia_profesional(fase, segundos):
-    """Maneja la visualización del temporizador"""
     for i in range(segundos, 0, -1):
         os.system('clear')
         print(f"--- MODO ALPHA: {fase} ---")
-        print(f"\n      [ {i} ] segundos")
-        # Mantener la música sonando mientras el tiempo corre
+        print(f"\n      [ {i} ]")
         time.sleep(1)
 
+# --- 2. EJECUCIÓN DEL PROGRAMA (Donde usamos las herramientas) ---
+
 if __name__ == "__main__":
-    # 1. Iniciamos la música UNA SOLA VEZ
     iniciar_ondas_alfa()
-    time.sleep(2) # Pausa breve para disfrutar el inicio del audio
+    
+    # Ciclo de prueba
+    for _ in range(5): # Solo un ciclo para probar rápido
+        guia_profesional("INHALA", 4)
+        guia_profesional("MANTÉN", 4)
+        guia_profesional("EXHALA", 4)
 
-    # 2. Ciclo de respiración (puedes repetir esto en un bucle)
-    for _ in range(3): # Repite el ciclo 3 veces
-        guia_profesional("INHALA PROFUNDO", 4)
-        guia_profesional("MANTÉN Y ENFOCA", 4)
-        guia_profesional("EXHALA LENTAMENTE", 4)
-        guia_profesional("MANTÉN EN VACÍO", 4)
-
-    print("\nSesión completada. Tu cerebro está en estado Alpha.")
+    print("\n--- SESIÓN COMPLETADA: Tu cerebro está en estado Alpha ---")
+    
+    try:
+        # Aquí es donde llamamos a la función que antes fallaba
+        puntaje = input("¿Nivel de claridad mental (1-10)?: ")
+        registrar_sesion(puntaje)
+        print("✅ Datos guardados con éxito.")
+    except Exception as e:
+        # Si algo falla, intentamos guardar N/A
+        print(f"Error al guardar: {e}")
+    
     pygame.mixer.music.stop()
+    print("Audio detenido. ¡Que tengas un excelente día, Sergio!")
