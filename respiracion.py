@@ -3,6 +3,10 @@ import os
 import pygame
 import csv
 from datetime import datetime
+from colorama import Fore, Style, init
+
+#Inicializa colorama para linux
+init(autoreset=True)
 
 # --- 1. DEFINICIÓN DE FUNCIONES (El banco de herramientas) ---
 
@@ -33,10 +37,21 @@ def registrar_sesion(calificacion, duracion_min=8):
         writer.writerow([fecha_hora, duracion_min, calificacion, "Alpha"])
 
 def guia_profesional(fase, segundos):
+    # lógica de colores para reducir carga cognitiva
+    if "INHALA" in fase:
+        color= Fore.GREEN  # Verde para vida/aire
+    elif "MANTEN" in fase:
+        color = Fore.CYAN  # Cian para calma/frío
+    elif "EXHALA" in fase:
+        color = Fore.YELLOW # Amarillo para soltar/calor
+    else:
+        color = Fore.WHITE
+        
     for i in range(segundos, 0, -1):
         os.system('clear')
-        print(f"--- MODO ALPHA: {fase} ---")
-        print(f"\n      [ {i} ]")
+        # Imprimimos con Brillo y Color
+        print(color + Style.BRIGHT + f"--- MODO ALPHA: {fase} ---")
+        print(color + f"\n   [{i}]")
         time.sleep(1)
 
 # --- 2. EJECUCIÓN DEL PROGRAMA (Donde usamos las herramientas) ---
